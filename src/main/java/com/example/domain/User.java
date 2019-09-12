@@ -7,7 +7,6 @@ package com.example.domain;
  *
  */
 public class User {
-
 	/**
 	 * ユーザid
 	 */
@@ -23,7 +22,7 @@ public class User {
 	/**
 	 * ユーザの郵便番号
 	 */
-	private Integer zipcode;
+	private String zipcode;
 	/**
 	 * ユーザのパスワード
 	 */
@@ -35,7 +34,27 @@ public class User {
 	/**
 	 * ユーザの電話番号
 	 */
-	private Integer telephone;
+	private String telephone;
+	/**
+	 * ユーザ権限
+	 */
+	private String role;
+
+	public User() {
+	}
+
+	public User(Integer id, String name, String email, String password, String zipcode, String address,
+			String telephone, String role) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.email = email;
+		this.password = password;
+		this.zipcode = zipcode;
+		this.address = address;
+		this.telephone = telephone;
+		this.role = role;
+	}
 
 	public Integer getId() {
 		return id;
@@ -61,11 +80,11 @@ public class User {
 		this.email = email;
 	}
 
-	public Integer getZipcode() {
+	public String getZipcode() {
 		return zipcode;
 	}
 
-	public void setZipcode(Integer zipcode) {
+	public void setZipcode(String zipcode) {
 		this.zipcode = zipcode;
 	}
 
@@ -76,7 +95,6 @@ public class User {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	
 
 	public String getPassword() {
 		return password;
@@ -86,12 +104,20 @@ public class User {
 		this.password = password;
 	}
 
-	public Integer getTelephone() {
+	public String getTelephone() {
 		return telephone;
 	}
 
-	public void setTelephone(Integer telephone) {
+	public void setTelephone(String telephone) {
 		this.telephone = telephone;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	@Override
@@ -99,6 +125,5 @@ public class User {
 		return "User [id=" + id + ", name=" + name + ", email=" + email + ", zipcode=" + zipcode + ", address="
 				+ address + ", telephone=" + telephone + "]";
 	}
-	
 
 }

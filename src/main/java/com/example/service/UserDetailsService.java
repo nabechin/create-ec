@@ -7,33 +7,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
-import com.example.demo.domain.LoginUser;
+import com.example.domain.LoginUser;
 import com.example.domain.User;
 import com.example.repository.UserRepository;
 
-@Service
-public class UserDetailsServiceImpl implements UserDetailsService {
-	
+/**
+ * @author yuma.watanabe
+ *
+ */
+public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService{
+
+	/** DBから(メールアドレスの)情報を得るためのリポジトリ */
 	@Autowired
-	private UserRepository repository;
+	private UserRepository userRepository;
 	
+	/**
+	 * DBからメールアドレスが一致するユーザを検索しログイン情報を構成して返す.
+	 */
 	@Override
-	public  UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		User user = repository.findByMailAddress(email);
-		if(user==null) {
+	public UserDetails loadUserByUsername(String email)
+		
+		throws UsernameNotFoundException {
+		
+		User user = userRepository.findByMailAddress(email);
+		if(user == null) {
+			
 			throw new UsernameNotFoundException("そのメールアドレスは登録されていません");
 		}
+		//ユーザ権限付与
 		Collection<GrantedAuthority> authorityList = new ArrayList<>();
 		authorityList.add(new SimpleGrantedAuthority("ROLE_USER")); // ユーザ権限付与
 		if(user.getRole().equals("ADMIN")) {
 		authorityList.add(new SimpleGrantedAuthority("ROLE_ADMIN")); // 管理者権限付与
 	}
 		return new LoginUser(user, authorityList);
-		
-	}
+	} 
 
 }
