@@ -53,6 +53,13 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 		// 仮useridを本idにupdate
 		Order order = (Order) session.getAttribute("order");
 		if (order != null && order.getUserId().equals(-1)) {
+
+			// そのユーザの未確定のorderが残っていないか確認する
+			Order orderInDb = orderService.findByUserIdStatus0(user.getId());
+			if (orderInDb != null) {
+				// 残っていたら、現在カートに入っているorderItemのorderIdをDBに残っているorderIdに更新する
+				Integer updateCount = orderItemService.updateOrderId(order.getId(), orderInDb.getId());
+			}
 			order.setUserId(user.getId());
 
 			orderService.update(order);
@@ -83,3 +90,4 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 	}
 
 }
+!

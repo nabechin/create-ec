@@ -51,4 +51,7 @@ public class OrderItemRepository {
 
 	}
 
+	public Integer updateOrderId(Integer oldOrderId, Integer newOrderId) {
+		return null;
+	}
 }

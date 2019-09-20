@@ -36,4 +36,9 @@ public class OrderItemService {
 		return orderItemRepository.findByOrderId(orderId);
 	}
 
+
+	public Integer updateOrderId(Integer oldOrderId, Integer newOrderId) {
+
+	}
+
 }
