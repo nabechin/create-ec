@@ -1,12 +1,12 @@
 	<!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ピザ屋のネット注文</title>
-<link href="css/bootstrap.css" rel="stylesheet">
-<link href="css/piza.css" rel="stylesheet">
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+<link th:href="@{/css/piza.css}" rel="stylesheet">
 <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -25,8 +25,8 @@
 							class="icon-bar"></span> <span class="icon-bar"></span> <span
 							class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="item_list.html"> <!-- 企業ロゴ --> <img
-						alt="main log" src="img/header_logo.png" height="35">
+					<a class="navbar-brand" th:href="@{/top}" href="item_list.html"> <!-- 企業ロゴ --> <img
+						alt="main log" src="/img_curry/header_logo.png"  height="35">
 					</a>
 				</div>
 
@@ -34,7 +34,7 @@
 				<div class="collapse navbar-collapse"
 					id="bs-example-navbar-collapse-1">
 					<p class="navbar-text navbar-right">
-						<a href="cart_list.html" class="navbar-link">ショッピングカート</a>&nbsp;&nbsp;
+						<a href="cart_list.html" th:href="@{/cart/show}" class="navbar-link">ショッピングカート</a>&nbsp;&nbsp;
 						<a href="order_history.html" class="navbar-link">注文履歴</a>&nbsp;&nbsp;
 						<a href="login.html" class="navbar-link">ログイン</a>&nbsp;&nbsp;
 						<a href="item_list.html" class="navbar-link">ログアウト</a>
@@ -51,7 +51,7 @@
 			<div
 				class="table-responsive col-lg-offset-1 col-lg-10 col-md-offset-1 col-md-10 col-sm-10 col-xs-12">
 				<h3 class="text-center">ショッピングカート</h3>
-				<table class="table table-striped">
+				<table class="table table-striped" th:if="${session.order}!=null">
 					<tbody>
 						<tr>
 							<th>
@@ -77,89 +77,33 @@
 							<th>
 							</th>
 						</tr>
-						<tr>
+						<tr th:each="orderItem:${session.order.orderItemList}" th:if="${orderItem.item.name}!=null">
 							<td>
 								<div class="center">
-									<img src="img/1.jpg"
+									<img th:src="@{${'/img_curry/'+orderItem.item.imagePath}}"
 										class="img-responsive img-rounded" width="100" height="300"><br>
-									じゃがバターベーコン
+									<span th:text="${orderItem.item.name}">じゃがバターベーコン</span>
 								</div>
 							</td>
 							<td>
-								<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個
+								<span class="price" th:text="${orderItem.size}">&nbsp;&nbsp;Ｌ</span>&nbsp;&nbsp;
+								<span th:if="${orderItem.size}=='M'" th:text="${#numbers.formatInteger(orderItem.item.priceM,2,'COMMA')}"></span>
+								<span th:if="${orderItem.size}=='L'" th:text="${#numbers.formatInteger(orderItem.item.priceL,2,'COMMA')}"></span>円
+								&nbsp;<span th:text="${orderItem.quantity}"></span>個
 							</td>
 							<td>
 								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
+									<li th:each="orderTopping : ${orderItem.orderToppingList}">
+										<span th:text="${orderTopping.topping.name}"></span>
+										<span th:if="${orderItem.size}=='M'" th:text="${orderTopping.topping.priceM}"></span>
+										<span th:if="${orderItem.size}=='L'" th:text="${orderTopping.topping.priceL}"></span>円
+									</li>
 								</ul>
 							</td>
 							<td>
-								<div class="text-center">
-									3,280円
-								</div>
-							</td>
-							<td>
-								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<div class="center">
-									<img src="img/1.jpg"
-										class="img-responsive img-rounded" width="100" height="300"><br>
-									じゃがバターベーコン
-								</div>
-							</td>
-							<td>
-								<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個
-							</td>
-							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
-								</ul>
-							</td>
-							<td>
-								<div class="text-center">
-									3,280円
-								</div>
-							</td>
-							<td>
-								<div class="text-center">
-									<button type="submit" class="btn btn-primary">削除</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<div class="center">
-									<img src="img/1.jpg"
-										class="img-responsive img-rounded" width="100" height="300"><br>
-									じゃがバターベーコン
-								</div>
-							</td>
-							<td>
-								<span class="price">&nbsp;Ｌ</span>&nbsp;&nbsp;2,380円
-								&nbsp;&nbsp;1個
-							</td>
-							<td>
-								<ul>
-									<li>ピーマン300円</li>
-									<li>オニオン300円</li>
-									<li>あらびきソーセージ300円</li>
-								</ul>
-							</td>
-							<td>
-								<div class="text-center">
-									3,280円
-								</div>
+								&nbsp;&nbsp;<span th:text="${#numbers.formatInteger(orderItem.subTotal,2,'COMMA')}" class="text-center">
+									3,280
+								</span>円
 							</td>
 							<td>
 								<div class="text-center">
@@ -169,14 +113,16 @@
 						</tr>
 					</tbody>
 				</table>
+					
 			</div>
 		</div>
+					<h4 th:if="${session.order}==null">商品を追加してください</h4>
 
-		<div class="row">
+		<div class="row" th:if="${session.order}!=null">
 			<div class="col-xs-offset-2 col-xs-8">
-				<div class="form-group text-center">
-					<span id="total-price">消費税：8,000円</span><br>
-					<span id="total-price">ご注文金額合計：38,000円 (税込)</span>
+				<div class="form-group text-center" th:if="${session.order.tax}!=0">
+					消費税：<span id="total-price" th:text="${#numbers.formatInteger(session.tax,2,'COMMA')}">8,000</span>円<br>
+					ご注文金額合計：<span id="total-price" th:text="${#numbers.formatInteger(session.totalPrice,2,'COMMA')}">38,000</span>円（税込）
 				</div>
 			</div>
 		</div>
@@ -184,7 +130,7 @@
 		<div class="row">
 			<div class="col-xs-offset-5 col-xs-3">
 				<div class="form-group">
-					<form action="order_confirm.html">
+					<form action="order_confirm.html" th:if="${session.order}!=null">
 						<input class="form-control btn btn-warning btn-block"
 							type="submit" value="注文に進む">
 					</form>

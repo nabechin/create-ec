@@ -8,10 +8,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import com.example.service.UserDetailsServiceImpl;
 
 /**
  * @author yuma.watanabe
@@ -22,7 +23,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private UserDetailsService memberDetailService;
+	private UserDetailsServiceImpl memberDetailService;
+	
+	@Autowired
+	private SuccessHandler successHandler;
 
 	/**
 	 * 静的リソースに対してセキュリティの設定を無効.
@@ -39,15 +43,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 	// 認可に関する設定
 		http.authorizeRequests()
-			.antMatchers("/user/**","/top/**", "/cart/**", "/showItemDetail/**").permitAll() // "/user/update"へ未ログイン時アクセスできないようパスを変更
-				.antMatchers("/user/login", "/user/toInsert", "/user/toInsertAdmin", "/user/insert", "/user/toLogin",
-						"/top/**", "/cart/**", "/showItemDetail/**")
+			.antMatchers("/user/**","/top/**", "/cart/**", "/showItemDetail/**")
 				.permitAll().antMatchers("/order/confirm", "/order/pricessing", "/order/finished", "/user/update")
 				.hasRole("USER").antMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated();
 
 		// ログインに関する設定
-		http.formLogin().loginPage("/user").loginProcessingUrl("/user/login").failureUrl("/user/login?error=true")
-				.defaultSuccessUrl("/top", true).usernameParameter("email").passwordParameter("password");
+		http.formLogin().loginPage("/user").loginProcessingUrl("/user/login").failureUrl("/user/toLogin?error=true")
+//				.defaultSuccessUrl("/top", true)
+		        .successHandler(successHandler)
+				.usernameParameter("email").passwordParameter("password");
 
 		// ログアウトに関する設定
 		http.logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout**")).logoutSuccessUrl("/top")// ログアウト後に遷移させるパス(ここでは商品一覧画面を設定)

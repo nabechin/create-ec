@@ -32,6 +32,21 @@ public class UserController {
 		return new UserForm();
 	}
 
+	@RequestMapping("")
+	public String login() {
+		return "login";
+	}
+
+	@RequestMapping("toLogin")
+	public String toLogin(Model model, @RequestParam(required = false) String error) {
+		System.err.println("login error:" + error);
+		if (error != null) {
+			System.err.println("login failed");
+			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが不正です");
+		}
+		return "login.html";
+	}
+
 	/**
 	 * 登録フォームの表示.
 	 * 
@@ -43,31 +58,16 @@ public class UserController {
 	}
 
 	/**
-	 * ログイン画面の表示.
-	 * 
-	 * @return ログイン画面
-	 */
-	@RequestMapping("/login")
-	public String toLogin(Model model, @RequestParam(required = false) String error) {
-		System.err.println("login error:" + error);
-		if (error != null) {
-			System.err.println("login failed");
-			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが不正です");
-		}
-		return "login.html";
-	}
-
-	/**
 	 * @param form   ユーザフォーム
 	 * @param result エラーメッセージ格納オブジェクト
 	 * 
 	 */
 	@RequestMapping("/insert")
-	public String insert(@Validated UserForm form, BindingResult result,String pass) {
+	public String insert(@Validated UserForm form, BindingResult result, String pass) {
 		if (service.findByMailAddress(form.getEmail()) != null) {
 			result.rejectValue("email", "", "Eメールはすでに登録されています");
 		}
-		if (!(form.getPassword().equals(pass))) {
+		if (!(form.getPassword().equals(form.getPassConfirm()))) {
 			result.rejectValue("passConfirm", "", "パスワードと確認用パスワードが異なります");
 		}
 		if (result.hasErrors()) {
@@ -77,7 +77,7 @@ public class UserController {
 		BeanUtils.copyProperties(form, user);
 		service.insert(user);
 
-		return "redirect:/login";
+		return "redirect:/user/login";
 
 	}
 

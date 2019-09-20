@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.example.domain.Topping;
@@ -28,6 +30,12 @@ public class ToppingRepository {
 		String Sql = "SELECT id,name,price_m,price_l from toppings";
 		List<Topping> toppingList = template.query(Sql, TOPPING_ROW_MAPPER);
 		return toppingList;
+	}
+	public Topping load(Integer id) {
+		String Sql = "SELECT id,name,price_m,price_l from toppings WHERE id=:id";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("id", id);
+		Topping topping = template.queryForObject(Sql, param,TOPPING_ROW_MAPPER);
+		return topping;
 	}
 
 }

@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.domain.Item;
 import com.example.domain.Topping;
-import com.example.service.showItemService;
+import com.example.service.ShowItemService;
 
 @Controller
 @RequestMapping("/top")
 public class showItemController {
 
 	@Autowired
-	private showItemService service;
+	private ShowItemService service;
 
 	@RequestMapping("")
 	public String showItemList(Model model) {

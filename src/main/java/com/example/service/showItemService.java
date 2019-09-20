@@ -13,7 +13,7 @@ import com.example.repository.ToppingRepository;
 
 @Service
 @Transactional
-public class showItemService {
+public class ShowItemService {
 
 	@Autowired
 	private ItemRepository repository;
@@ -39,5 +39,9 @@ public class showItemService {
 
 	public List<Topping> findAllOfTopping() {
 		return toppingRepository.findAll();
+	}
+	public Topping loadTopping(Integer id) {
+		return toppingRepository.load(id);
+		
 	}
 }
