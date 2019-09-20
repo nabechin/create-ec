@@ -90,7 +90,7 @@ public class ShoppingCartController {
 //			order.setOrderItemList(new ArrayList());
 //			
 //		}
-		session.setAttribute("order", order);
+//		session.setAttribute("order", order);
 		return "cart_list";
 
 	}

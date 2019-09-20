@@ -56,9 +56,11 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 			order.setUserId(user.getId());
 			orderService.update(order);
 		}
+
 		// 本useridの未確定のorderを取得する
 		order = orderService.findByUserIdStatus0(user.getId());
 		List<OrderItem> orderItemList = orderItemService.findByOrderId(order.getId());
+		order.setOrderItemList(orderItemList);
 		for (OrderItem orderItem : orderItemList) {
 
 			Item item = showItemService.load(orderItem.getItemId());
@@ -66,15 +68,14 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 			orderItem.setItem(item);
 
 			List<OrderTopping> orderToppingList = orderToppingService.findByOrderItemId(orderItem.getId());
+			orderItem.setOrderToppingList(orderToppingList);
 			for (OrderTopping orderTopping : orderToppingList) {
 				orderTopping.setTopping(showItemService.loadTopping(orderTopping.getToppingId()));
-				orderItem.getOrderToppingList().add(orderTopping);
+//				orderItem.getOrderToppingList().add(orderTopping);
 			}
-			order.getOrderItemList().add(orderItem);
+//			order.getOrderItemList().add(orderItem);
 		}
 		session.setAttribute("order", order);
-
-		//
 
 		response.sendRedirect(request.getContextPath() + "/top");
 
