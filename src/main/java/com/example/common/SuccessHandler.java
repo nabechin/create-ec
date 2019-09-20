@@ -54,6 +54,7 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 		Order order = (Order) session.getAttribute("order");
 		if (order != null && order.getUserId().equals(-1)) {
 			order.setUserId(user.getId());
+
 			orderService.update(order);
 		}
 

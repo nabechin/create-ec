@@ -24,4 +24,8 @@ public class OrderService {
 	public Order findByUserIdStatus0(Integer userId) {
 		return repository.findByUserIdStatus0(userId);
 	}
+
+	public void deleteByAssumedId(Integer assumedId) {
+		repository.deleteByAssumedId(assumedId);
+	}
 }

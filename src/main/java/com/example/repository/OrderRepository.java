@@ -16,11 +16,11 @@ public class OrderRepository {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	
+
 	@Autowired
 	private NamedParameterJdbcTemplate template;
-	
-	private static final RowMapper<Order> ORDER_ROW_MAPPER= (rs,i)->{
+
+	private static final RowMapper<Order> ORDER_ROW_MAPPER = (rs, i) -> {
 		Order order = new Order();
 		order.setId(rs.getInt("id"));
 		order.setUserId(rs.getInt("user_id"));
@@ -35,30 +35,39 @@ public class OrderRepository {
 		order.setDeliveryTime(rs.getTimestamp("delivery_time"));
 		order.setPaymentMethod(rs.getInt("payment_method"));
 		return order;
-		
+
 	};
-	
+
 	public Integer insert(Order order) {
 		String sql = "INSERT into orders (";
 		sql += " user_id";
 		sql += " ,status";
 		sql += " ,total_price";
-		sql += " ) VALUES  (?,?,?) RETURNING id";		
-		
-		return jdbcTemplate.queryForObject(sql, Integer.class, order.getUserId(), order.getStatus(), order.getTotalPrice());
+		sql += " ) VALUES  (?,?,?) RETURNING id";
+
+		return jdbcTemplate.queryForObject(sql, Integer.class, order.getUserId(), order.getStatus(),
+				order.getTotalPrice());
 	}
+
 	public void update(Order order) {
 		SqlParameterSource param = new BeanPropertySqlParameterSource(order);
 		String Sql = "UPDATE orders SET user_id = :userId WHERE id=:id";
-		template.update(Sql,param);
-		
+		template.update(Sql, param);
+
 	}
-	 public Order findByUserIdStatus0(Integer userId) {
-		 String sql = "SELECT id,user_id,status,total_price,order_date,"
-		 		+ "destination_name,destination_email,destination_zipcode,"
-		 		+ "destination_address,destination_tel,delivery_time,payment_method from orders WHERE user_id=:userId AND status=0";
-		 SqlParameterSource param = new MapSqlParameterSource().addValue("userId",userId);
-		 Order order = template.queryForObject(sql,param,ORDER_ROW_MAPPER);
-		 return order;
+
+	public Order findByUserIdStatus0(Integer userId) {
+		String sql = "SELECT id,user_id,status,total_price,order_date,"
+				+ "destination_name,destination_email,destination_zipcode,"
+				+ "destination_address,destination_tel,delivery_time,payment_method from orders WHERE user_id=:userId AND status=0";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
+		Order order = template.queryForObject(sql, param, ORDER_ROW_MAPPER);
+		return order;
+	}
+
+	public void deleteByAssumedId(Integer assumedId) {
+		String Sql = "DELETE FROM orders WHERE user_id =:assumedId";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("assumedId", assumedId);
+		template.update(Sql, param);
 	}
 }
