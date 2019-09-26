@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +30,14 @@ public class OrderService {
 	public void deleteByAssumedId(Integer assumedId) {
 		repository.deleteByAssumedId(assumedId);
 	}
+
+	public void deleteByNewOrderId(Integer newOrderId) {
+		repository.deleteByNewOrderId(newOrderId);
+
+	}
+	public List<Order> findByUserIdStatus0ForOrderList(Integer userId){
+		return repository.findByUserIdStatus0ForOrderList(userId);
+		
+	}
+
 }

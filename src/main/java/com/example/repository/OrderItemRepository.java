@@ -51,7 +51,12 @@ public class OrderItemRepository {
 
 	}
 
-	public Integer updateOrderId(Integer oldOrderId, Integer newOrderId) {
-		return null;
+	public Integer updateByOrderId(Integer oldOrderId, Integer newOrderId) {
+		String Sql = "UPDATE order_items SET order_id = :oldOrderId WHERE order_id = :newOrderId";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("oldOrderId", oldOrderId)
+				.addValue("newOrderId",newOrderId);
+		template.update(Sql, param);
+		return newOrderId;
 	}
+
 }

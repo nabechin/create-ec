@@ -4,3 +4,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/ecsite
     username: postgres
     password: postgres
+    
+  
+  jmx:
+    enabled: false

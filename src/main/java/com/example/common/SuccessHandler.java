@@ -17,7 +17,6 @@ import com.example.domain.Item;
 import com.example.domain.Order;
 import com.example.domain.OrderItem;
 import com.example.domain.OrderTopping;
-import com.example.domain.Topping;
 import com.example.domain.User;
 import com.example.service.OrderItemService;
 import com.example.service.OrderService;
@@ -52,42 +51,50 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
 		User user = userService.findByMailAddress(request.getParameter("email"));
 		// 仮useridを本idにupdate
 		Order order = (Order) session.getAttribute("order");
-		if (order != null && order.getUserId().equals(-1)) {
+		if (order != null) {
 
-			// そのユーザの未確定のorderが残っていないか確認する
-			Order orderInDb = orderService.findByUserIdStatus0(user.getId());
-			if (orderInDb != null) {
-				// 残っていたら、現在カートに入っているorderItemのorderIdをDBに残っているorderIdに更新する
-				Integer updateCount = orderItemService.updateOrderId(order.getId(), orderInDb.getId());
-			}
-			order.setUserId(user.getId());
+			List<Order> orderList = orderService.findByUserIdStatus0ForOrderList(user.getId());
 
-			orderService.update(order);
-		}
+			if (orderList.size() != 0 || order != null) {
+				Order orderInDb = orderService.findByUserIdStatus0(user.getId());
+				if (orderInDb != null) {
+					// 残っていたら、現在カートに入っているorderItemのorderIdをDBに残っているorderIdに更新する
+					Integer updateCount = orderItemService.updateOrderId(order.getId(), orderInDb.getId());
+					orderService.deleteByNewOrderId(updateCount);
+				}
 
-		// 本useridの未確定のorderを取得する
-		order = orderService.findByUserIdStatus0(user.getId());
-		List<OrderItem> orderItemList = orderItemService.findByOrderId(order.getId());
-		order.setOrderItemList(orderItemList);
-		for (OrderItem orderItem : orderItemList) {
+				if (order != null && order.getUserId().equals(-1)) {
+					order.setUserId(user.getId());
+					orderService.update(order);
+					// そのユーザの未確定のorderが残っていないか確認する
+				}
 
-			Item item = showItemService.load(orderItem.getItemId());
+				// 本useridの未確定のorderを取得する
+				order = orderService.findByUserIdStatus0(user.getId());
+				List<OrderItem> orderItemList = orderItemService.findByOrderId(order.getId());
+				order.setOrderItemList(orderItemList);
+				for (OrderItem orderItem : orderItemList) {
 
-			orderItem.setItem(item);
+					Item item = showItemService.load(orderItem.getItemId());
 
-			List<OrderTopping> orderToppingList = orderToppingService.findByOrderItemId(orderItem.getId());
-			orderItem.setOrderToppingList(orderToppingList);
-			for (OrderTopping orderTopping : orderToppingList) {
-				orderTopping.setTopping(showItemService.loadTopping(orderTopping.getToppingId()));
+					orderItem.setItem(item);
+
+					List<OrderTopping> orderToppingList = orderToppingService.findByOrderItemId(orderItem.getId());
+					orderItem.setOrderToppingList(orderToppingList);
+					for (OrderTopping orderTopping : orderToppingList) {
+						orderTopping.setTopping(showItemService.loadTopping(orderTopping.getToppingId()));
 //				orderItem.getOrderToppingList().add(orderTopping);
-			}
+					}
 //			order.getOrderItemList().add(orderItem);
-		}
-		session.setAttribute("order", order);
+				}
+				session.setAttribute("order", order);
+			} else {
+				session.setAttribute("user", user);
+			}
 
-		response.sendRedirect(request.getContextPath() + "/top");
+			response.sendRedirect(request.getContextPath() + "/top");
+
+		}
 
 	}
-
 }
-!

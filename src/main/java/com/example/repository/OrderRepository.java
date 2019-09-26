@@ -1,5 +1,7 @@
 package com.example.repository;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -70,4 +72,19 @@ public class OrderRepository {
 		SqlParameterSource param = new MapSqlParameterSource().addValue("assumedId", assumedId);
 		template.update(Sql, param);
 	}
+
+	public void deleteByNewOrderId(Integer newOrderId) {
+		String Sql = "DELETE FROM orders WHERE id = :newOrderId";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("newOrderId", newOrderId);
+		template.update(Sql, param);
+	}
+	public List<Order> findByUserIdStatus0ForOrderList(Integer userId){
+		String Sql = "SELECT id,user_id,status,total_price,order_date,"
+				+ "destination_name,destination_email,destination_zipcode,"
+				+ "destination_address,destination_tel,delivery_time,payment_method from orders WHERE user_id=:userId AND status=0";
+		SqlParameterSource param = new MapSqlParameterSource().addValue("userId", userId);
+		List<Order> orderList = template.query(Sql,param,ORDER_ROW_MAPPER);
+		return orderList;
+	}
+
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.domain.Order;
 import com.example.domain.OrderItem;
 import com.example.domain.OrderTopping;
+import com.example.domain.User;
 import com.example.form.ShoppingCartForm;
 import com.example.service.OrderItemService;
 import com.example.service.OrderService;
@@ -47,7 +48,11 @@ public class ShoppingCartController {
 			order = new Order();
 			order.setOrderItemList(new ArrayList<>());
 			// 作成したorderをDBに書き込む
+			User user = (User)session.getAttribute("user");
 			order.setUserId(-1);
+			if(user!=null){
+				order.setUserId(user.getId());
+			}
 			order.setStatus(0);
 			order.setTotalPrice(0);
 			Integer orderId = orderService.insert(order);
